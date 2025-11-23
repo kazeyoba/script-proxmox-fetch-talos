@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-cd "/var/lib/vz/template/iso" #Path for ISO on proxmox
+START_ID=2000
+
+cd "/var/lib/vz/template/iso"
 
 echo "[*] Récupération de la liste des versions Talos..."
 
@@ -17,8 +19,13 @@ for VERSION in $VERSIONS; do
     echo "[*] Traitement de Talos version: $VERSION"
     echo "====================================================="
 
-    # URLs officielles QCOW2
+    ISO_FILE="talos-amd64-${VERSION}.iso"
     ISO_URL="https://github.com/siderolabs/talos/releases/download/${VERSION}/metal-amd64.iso"
 
-    wget -O "talos-amd64-${VERSION}.iso" $ISO_URL
-don
+    if [ -f "$ISO_FILE" ]; then
+        echo "[*] ISO déjà existante: $ISO_FILE, téléchargement ignoré."
+    else
+        echo "[*] Téléchargement de l'ISO: $ISO_FILE"
+        wget -O "$ISO_FILE" "$ISO_URL"
+    fi
+done
